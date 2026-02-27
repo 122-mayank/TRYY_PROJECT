@@ -7,7 +7,6 @@ require('dotenv').config();
 
 const app = express();
 
-const app = express();
 
 // ✅ Add this line to trust the first proxy (Render's load balancer)
 app.set('trust proxy', 1);
