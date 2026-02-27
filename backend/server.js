@@ -7,6 +7,13 @@ require('dotenv').config();
 
 const app = express();
 
+const app = express();
+
+// ✅ Add this line to trust the first proxy (Render's load balancer)
+app.set('trust proxy', 1);
+
+// ... rest of your code (helmet, cors, etc.)
+
 // ... (your existing code)
 
 const allowedOrigins = [
