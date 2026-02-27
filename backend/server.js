@@ -7,18 +7,39 @@ require('dotenv').config();
 
 const app = express();
 
+// ... (your existing code)
+
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://tryy-project-1-frontend.onrender.com'
+];
+
 // Security middleware
 app.use(helmet());
+
+// ✅ FIXED CORS CONFIGURATION
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl, or Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true // This allows cookies/auth headers to be sent
 }));
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100
 });
+app.use('/api/', limiter);
+
+// ... (rest of your server.js remains exactly the same)
 app.use('/api/', limiter);
 
 app.use(express.json());
